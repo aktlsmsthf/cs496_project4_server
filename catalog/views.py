@@ -98,7 +98,7 @@ def data_return(request):
 		data = img.reshape([1, 784])
 		data = 1 - (data/255)
 
-		scipy.misc.imsave('image/test.png', img)
+		#scipy.misc.imsave('image/test.png', img)
 
 		return render(request, 'test.html',{})
 
