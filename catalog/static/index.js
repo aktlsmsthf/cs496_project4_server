@@ -36,11 +36,6 @@
 
 	canvas.addEventListener( "contextmenu", function( e )
 	{
-		context.clearRect( 0, 0, 560, 560 );
-		context.fillStyle="white";
-		context.fillRect(0,0,canvas.width,canvas.height);
-		flag = 0;
-		//window.event.returnValue = false;
 		var img = canvasObj.toDataURL();
 		img = encodeURIComponent(img);
 		$.ajax({
@@ -51,6 +46,13 @@
 				$('#result').replaceWith('<div id = "result">'+data+'</div>')
 			}
 		});
+
+		context.clearRect( 0, 0, 560, 560 );
+		context.fillStyle="white";
+		context.fillRect(0,0,canvas.width,canvas.height);
+		flag = 0;
+		//window.event.returnValue = false;
+		
 
 
 		//$('#result').replaceWith('<div id = "result"> <p></p></div>');
