@@ -44,13 +44,14 @@
 			data: img,
 			success: function(data){
 				$('#result').replaceWith('<div id = "result">'+data+'</div>')
+				context.clearRect( 0, 0, 560, 560 );
+				context.fillStyle="white";
+				context.fillRect(0,0,canvas.width,canvas.height);
+				flag = 0;
+
 			}
 		});
 
-		context.clearRect( 0, 0, 560, 560 );
-		context.fillStyle="white";
-		context.fillRect(0,0,canvas.width,canvas.height);
-		flag = 0;
 		//window.event.returnValue = false;
 		
 
