@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+	{% block title %}<title>Local library</title>{% endblock %}
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+	{% load static %}
+	<link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
+</head>
+
+<body>
+	<div class="container-fluid">
+		<div class="row">
+			
+			{% block sidebar %}
+			<div class="w3-sidebar w3-bar-block w3-border-right" style="display:none" id="mySidebar">
+
+			<ul >
+				<button onclick="w3_close()" class = "w3-bar-item w3-large">Close &times;</button>
+				<li><a href="{% url 'index' %}">Home</a></li>
+				<li><a href="{% url 'books' %}">All books</a></li>
+				<li><a href="{% url 'mnist' %}">MNIST</a></li>
+				<li><a href="">All authors</a></li>
+				{% if user.is_authenticated %}
+					<li>User: {{ user.get_usename}}</li>
+					<li><a href="{% url 'my-borrowed' %}">My Borrowed</a></li>
+					<li><a href="{% url 'logout'%}?next={{request.path}}">Logout</a></li>
+				{% else %}
+					<li><a href="{% url 'login'%}?next={{request.path}}">Login</a><li>
+				{% endif %}
+			</ul>
+			</div>
+			{% endblock %}
+			
+			<div class="w3-teal">
+				<button onclick="w3_open()" class="w3-button w3-teal w3-xlarge">&#9776;</button>
+				<div class="w3-container">
+					<h1>My Neural Net</h1>
+				</div>
+			</div>
+
+			<div>
+			{% block content %}{% endblock %}
+			</div>
+		</div>
+	</div>
+	<script>
+		function w3_close(){
+			document.getElementById("mySidebar").style.display="none";
+		}
+		function w3_open(){
+			document.getElementById("mySidebar").style.display="block";
+		}
+	</script>
+</body>
+</html>

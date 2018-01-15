@@ -1,0 +1,25 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+	<div id="direction"><p>RIGHT CLICK to CLEAR</p></div>
+	<div id="name">
+		<canvas id="canvas" width="560" height="560" style="border:8px solid;float: left;border-radius: 5px;cursor: crosshair;"></canvas>
+		<div id = "result">
+			<p>Please write number 1</p>
+		</div>
+		<button id="submit">확인</button>
+
+		<script src = "http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+		<script src = "/static/index.js"></script>
+		<script type = "text/javascript">
+			canvas = document.getElementById("canvas");
+			ctx = canvas.getContext("2d");
+			ctx.lineWidth=35;
+		</script>
+		<script type="text/javascript">
+			$("#clearButton").click(function(){
+				$("#result").text("");
+			});
+		</script>
+	</div>
+{% endblock %}
