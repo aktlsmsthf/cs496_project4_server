@@ -84,21 +84,19 @@ def data_return(request):
 		fh = open("imageToSave.png", "wb")
 		fh.write(img)
 		fh.close()
+
+
 		
 		im = Image.open("imageToSave.png")
 		rgb_im = im.convert('RGB')
 		rgb_im.save('colors.jpg')
-		rgb_im.save(str(time.time())+'.jpg')
+		rgb_im.save('image/test.jpg')
 
 
 		im=Image.open('colors.jpg')
 		img = array(im.resize((28, 28), Image.ANTIALIAS).convert("L"))
 		data = img.reshape([1, 784])
 		data = 1 - (data/255)
-
-		scipy.misc.imsave('image/test.png', img)
-		print("save success")
-
 
 		return render(request, 'test.html',{})
 
