@@ -4,5 +4,21 @@
 <h2> My Page </h2>
 
 <p><strong>Images: </strong> {{num_images}}</p>
+<ul class='gallery' style="list-style-type:none;">
+	{% if image_list %}
+		{% for image in image_list %}
+		<li style="float:left;">
+		
+			<img hspace="3px"  padding = "3px" height="56" width="56" alt="learning_data" src="{{image.img.url}}">
+				<span><i class="fa fa-link"></i></span>
+			</img>
+		
+		<div align="center"><font size="1"><strong>Label: </strong>{{image.label}}</font></div>
+		</li>
+		{% endfor %}
+	{% else %}
+		<li>No image</li>
+	{% endif %}
+</ul>
 
 {% endblock %}

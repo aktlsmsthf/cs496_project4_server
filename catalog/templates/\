@@ -1,0 +1,20 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<h2> My Page </h2>
+
+<p><strong>Images: </strong> {{num_images}}</p>
+<ul class='gallery'>
+	{% if image_list %}
+		{% for image in image_list %}
+		<a href="#">
+			<img height="42" width="42" alt="learning_data" src="{{image.img.url}}">
+				<span><i class="fa fa-link"></i></span>
+			</img>
+		
+		{% endfor %}
+	{% else %}
+		<li>No image</li>
+	{% endif %}
+
+{% endblock %}

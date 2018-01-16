@@ -5,9 +5,10 @@ import base64
 from django.core.files.base import ContentFile
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from .models import Book, Author, BookInstance, Genre, Post, TestData, Images
+from .models import  Images, MnistNN
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Max
 from PIL import Image
 import tensorflow as tf
 from time import sleep
@@ -20,62 +21,30 @@ from numpy import array, argmax
 
 
 # Create your views here.
-class BookListView(LoginRequiredMixin, generic.ListView):
-	login_url='/login/'
-	redirect_field_name='redirect_to'
-	model=Book
-	context_object_name = 'my_book_list'
-	queryset = Book.objects.filter(title__icontains='war')[:5]
-	template_name = 'books/my_arbitrary_template_name_list.html'
 
-class BookDetailView(generic.DetailView):
-	model = Book
 
-class LoanedBooksByUserListView(LoginRequiredMixin, generic.ListView):
-	model=BookInstance
-	template_name='catalog/bookinstance_list_borrowed_user.html'
-	paginate_by=10
 
-	def get_queryset(self):
-		return BookInstance.objects.filter(borrower=self.request.user).filter(status__exact='o').order_by('due_back')
-
-@login_required
-def book_detail_view(request, pk):
-	try:
-		book_id = Book.objects.get(pk=pk)
-	except Book.DoesNotExist:
-		raise Http404("Book does not exist")
-	#book_id=get_obejt_or_404(Book, pk=pk)
-
-	return render(
-		request,
-		'catalog/book_detail.html',
-		context={'book':book_id,}
-	)
 
 @login_required
 def mypage(request):
 	num_image = Images.objects.filter(owner=request.user).count()
+	image_list = Images.objects.filter(owner=request.user)
+	print(image_list.values('img'))
+
 	return render(
 		request,
 		'mypage.html',
-		context = {'num_images':num_image},
+		context = {'num_images':num_image, 
+		'image_list':image_list},
 	)
 
 @login_required
 def index(request):
-	num_books = Book.objects.all().count()
-	num_instances = BookInstance.objects.all().count()
-	num_instances_available = BookInstance.objects.filter(status__exact='a').count()
-	num_authors = Author.objects.count()
 
 	return render(
 		request,
 		'index.html',
-		context={'num_books':num_books, 
-		'num_intances':num_instances, 
-		'num_instances_available':num_instances_available,
-		'num_authors':num_authors},
+		context={},
 	)
 
 @csrf_exempt
@@ -96,13 +65,21 @@ def data_return(request):
 		data = result[0][28:]
 	
 		index = Images.objects.all().count()+1
+		path = Images.objects.all().aggregate(Max('path'))['path__max']
+		if path==None:
+			path = 1
+		else:
+			path = path+1
+		print(index, path)
+
 		nimage = Images()
 		nimage.owner = request.user
 		nimage.id = index
 		nimage.label = label
+		nimage.path = path
+		nimage.img = '/image/'+str(index)+'.jpg'
 		nimage.save()
-		print(nimage.owner, nimage.id, nimage.label)
-		
+
 		img = base64.b64decode(data)
 
 		fh = open("imageToSave.png", "wb")
@@ -124,6 +101,12 @@ def data_return(request):
 
 		return render(request, 'test.html',{})
 
+@csrf_exempt
+def train(request):
+	if(request.method=='POST'):
+		mnist = MnistNN.objects.filter(owner=request.user)
+		mnist[0].work(True, None, request.user)
+		return render(request, 'test.html', {})
 		'''
 		tf.set_random_seed(777)  # reproducibility
 

@@ -3,3 +3,21 @@
 	padding: 0;
 	list-style: none;
 }
+
+./gallery{
+	list-style: none outside none;
+	margin: 0;
+	padding: 0;
+}
+
+.gallery li{
+	float: left;
+	width:33%;
+	height: 100px;
+	overflow:hidden;
+}
+
+.comment-image, .gallery li, .post-small .image, .post-image, .portfolio-item{
+	display: block;
+	position: relative;
+}
