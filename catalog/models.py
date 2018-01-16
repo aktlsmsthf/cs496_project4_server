@@ -5,6 +5,14 @@ from django.utils import timezone
 import uuid
 
 # Create your models here.
+class Images(models.Model):
+	owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+	id = models.IntegerField(primary_key=True)
+	label = models.IntegerField(null=True)
+
+	def __str__(self):
+		return str(self.id)
+
 class Post(models.Model):
 	author = models.ForeignKey('auth.User', on_delete=models.CASCADE)
 	title = models.CharField(max_length=200)

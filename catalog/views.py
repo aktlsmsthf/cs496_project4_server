@@ -5,7 +5,7 @@ import base64
 from django.core.files.base import ContentFile
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from .models import Book, Author, BookInstance, Genre, Post, TestData
+from .models import Book, Author, BookInstance, Genre, Post, TestData, Images
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from PIL import Image
@@ -54,6 +54,15 @@ def book_detail_view(request, pk):
 	)
 
 @login_required
+def mypage(request):
+	num_image = Images.objects.filter(owner=request.user).count()
+	return render(
+		request,
+		'mypage.html',
+		context = {'num_images':num_image},
+	)
+
+@login_required
 def index(request):
 	num_books = Book.objects.all().count()
 	num_instances = BookInstance.objects.all().count()
@@ -74,30 +83,43 @@ def post_list(request):
 	return render(request, 'post_list.html', {})
 
 @csrf_exempt
+@login_required
 def data_return(request):
 	temp = 0
 	result = list(request.POST.keys())
 	if(request.method == 'POST'):
-		data = result[0][22:]
+		if(result[0][:5] == "label"):
+			print("fail")
+			return render(request, 'test.html',{})
+
+		label = result[0][0]
+		data = result[0][28:]
+	
+		index = Images.objects.all().count()+1
+		nimage = Images()
+		nimage.owner = request.user
+		nimage.id = index
+		nimage.label = label
+		nimage.save()
+		print(nimage.owner, nimage.id, nimage.label)
+		
 		img = base64.b64decode(data)
 
 		fh = open("imageToSave.png", "wb")
 		fh.write(img)
 		fh.close()
 
-
-		
 		im = Image.open("imageToSave.png")
 		rgb_im = im.convert('RGB')
 		rgb_im.save('colors.jpg')
-		rgb_im.save('image/test.jpg')
+		rgb_im.save('image/'+str(index)+'.jpg')
 
 
 		im=Image.open('colors.jpg')
 		img = array(im.resize((28, 28), Image.ANTIALIAS).convert("L"))
 		data = img.reshape([1, 784])
 		data = 1 - (data/255)
-
+		
 		#scipy.misc.imsave('image/test.png', img)
 
 		return render(request, 'test.html',{})

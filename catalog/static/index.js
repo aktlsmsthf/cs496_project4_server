@@ -38,10 +38,12 @@
 	{
 		var img = canvasObj.toDataURL();
 		img = encodeURIComponent(img);
+		var label = $("#numberinput").val()
+
 		$.ajax({
 			type: "POST",
 			url: '/catalog/test/',
-			data: img,
+			data: label+"label"+img,
 			success: function(data){
 				$('#result').replaceWith('<div id = "result">'+data+'</div>')
 				context.clearRect( 0, 0, 560, 560 );

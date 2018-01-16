@@ -9,4 +9,5 @@ urlpatterns = [
 	path('mybooks/', views.LoanedBooksByUserListView.as_view(), name='my-borrowed'),
 	path('mnist/', views.post_list, name="mnist"),
 	path('test/',views.data_return, name="test"),
+	path('mypage/', views.mypage, name="mypage"),
 ]
