@@ -2,7 +2,7 @@
 
 {% block content %}
 <h2> My Page </h2>
-<div>
+
 <p><strong>Images: </strong> {{num_images}}</p>
 <p><strong>Accuracy: </strong> {{accuracy}}%</p>
 <button id="delete" onclick="deletes()">Delete Image</button>
@@ -11,7 +11,7 @@
 		{% for image in image_list %}
 		<li style="float:left;">
 			
-			<div style="position:relative;"><label><input id="{{image.img.url}}" type="checkbox" onchange="toggleCheckbox(this)"></label></div>
+			<div style="position:relative;"><label for="{{image.img.url}}"><input id="{{image.img.url}}" name="{{image.img.url}}" type="checkbox" onchange="toggleCheckbox(this)"></div>
 			<div style="position:relative;z-index:2"><img stytle="position:relative;" hspace="3px"  padding = "3px" height="56" width="56" alt="learning_data" src="{{image.img.url}}">
 				<span><i class="fa fa-link"></i></span>
 			</img></div>
@@ -27,28 +27,37 @@
 	var checks = [];
 	function deletes(){
 		console.log("???");
+		console.log(checks);
 		$.ajax({
 			type:"POST",
 			url: '/catalog/delete/',
-			data: checks,
+			data: checks.toString(),
 			success: function(data){
-
+				location.href="/catalog/mypage";
 			}
 		})
 	}
 	function toggleCheckbox(element){
-		element.checked = !element.checked;
+		console.log(element.id);
+		//element.checked = !element.checked;
+		console.log("1");
 		if(element.checked){
+			console.log("2");
 			checks.push(element.id);
 		}
 		else{
+			console.log("3");
 			var index = checks.indexOf(element.id);
+			console.log("4"); 
 			if(index!=-1){
+				console.log("5");
 				checks.slice(index, 1);
 			}
+			console.log("6");
 		}
+		console.log(checks);
 	}
 </script>
-</div>
+
 
 {% endblock %}

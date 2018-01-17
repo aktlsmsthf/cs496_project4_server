@@ -1,9 +1,10 @@
 from django.contrib import admin
-from .models import Images, MnistNN
+from .models import Images, MnistNN, TestImages
 
 # Register your models here.
 admin.site.register(Images)
 admin.site.register(MnistNN)
+admin.site.register(TestImages)
 
 class BookInstanceAdmin(admin.ModelAdmin):
 	list_display = ('book', 'status', 'borrower', 'due_back', 'id')

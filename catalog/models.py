@@ -13,6 +13,13 @@ from tensorflow.examples.tutorials.mnist import input_data
 mnist = input_data.read_data_sets("./mnist/data/", one_hot=True)
 
 # Create your models here.
+class TestImages(models.Model):
+	label = models.IntegerField(null=True)
+	img = models.ImageField(upload_to="image/testset/", null=True, blank=True)
+	
+	def __str(self):
+		return str(self.label)
+
 class Images(models.Model):
 	owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
 	id = models.IntegerField(primary_key=True)
@@ -126,6 +133,7 @@ class MnistNN(models.Model):
 			print('Accuracy:', sess.run(accuracy, feed_dict={X: mnist.test.images, Y:mnist.test.labels, keep_prob:1}))
 			self.accuracy = sess.run(accuracy, feed_dict={X: mnist.test.images, Y:mnist.test.labels, keep_prob:1})*100
 			self.save()
+			return self.accuracy
 			
 class TestData(models.Model):
 	pred = models.IntegerField()
