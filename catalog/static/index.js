@@ -2,7 +2,7 @@
 {
 	var canvas = document.querySelector( "#canvas" );
 	var canvasObj = document.getElementById("canvas");
-	var button = document.getElementById("submit");
+
 
 	var context = canvas.getContext( "2d" );
 	canvas.width = 560;
@@ -36,6 +36,8 @@
 
 	canvas.addEventListener( "contextmenu", function( e )
 	{
+
+
 		var img = canvasObj.toDataURL();
 		img = encodeURIComponent(img);
 		var label = $("#numberinput").val()
@@ -45,7 +47,6 @@
 			url: '/catalog/test/',
 			data: label+"label"+img,
 			success: function(data){
-				$('#result').replaceWith('<div id = "result">'+data+'</div>')
 				context.clearRect( 0, 0, 560, 560 );
 				context.fillStyle="white";
 				context.fillRect(0,0,canvas.width,canvas.height);
@@ -80,16 +81,7 @@
 
 	}, false );
 
-	button.click(function(){
-		$.ajax({
-			type: "POST",
-			url: '/catalog/test/',
-			data: img,
-			success: function(data){
-				$('#result').replaceWith('<div id = "result">'+data+'</div>')
-			}
-		});
-	});
+
 
 	var onPaint = function()
 	{

@@ -2,16 +2,19 @@
 
 {% block content %}
 <h2> My Page </h2>
-
+<div>
 <p><strong>Images: </strong> {{num_images}}</p>
+<p><strong>Accuracy: </strong> {{accuracy}}%</p>
+<button id="delete" onclick="deletes()">Delete Image</button>
 <ul class='gallery' style="list-style-type:none;">
 	{% if image_list %}
 		{% for image in image_list %}
 		<li style="float:left;">
-		
-			<img hspace="3px"  padding = "3px" height="56" width="56" alt="learning_data" src="{{image.img.url}}">
+			
+			<div style="position:relative;"><label><input id="{{image.img.url}}" type="checkbox" onchange="toggleCheckbox(this)"></label></div>
+			<div style="position:relative;z-index:2"><img stytle="position:relative;" hspace="3px"  padding = "3px" height="56" width="56" alt="learning_data" src="{{image.img.url}}">
 				<span><i class="fa fa-link"></i></span>
-			</img>
+			</img></div>
 		
 		<div align="center"><font size="1"><strong>Label: </strong>{{image.label}}</font></div>
 		</li>
@@ -20,5 +23,32 @@
 		<li>No image</li>
 	{% endif %}
 </ul>
+<script type="text/javascript">
+	var checks = [];
+	function deletes(){
+		console.log("???");
+		$.ajax({
+			type:"POST",
+			url: '/catalog/delete/',
+			data: checks,
+			success: function(data){
+
+			}
+		})
+	}
+	function toggleCheckbox(element){
+		element.checked = !element.checked;
+		if(element.checked){
+			checks.push(element.id);
+		}
+		else{
+			var index = checks.indexOf(element.id);
+			if(index!=-1){
+				checks.slice(index, 1);
+			}
+		}
+	}
+</script>
+</div>
 
 {% endblock %}

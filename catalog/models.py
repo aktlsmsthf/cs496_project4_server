@@ -25,10 +25,10 @@ class Images(models.Model):
 
 class MnistNN(models.Model):
 	owner = models.ForeignKey('auth.User', on_delete=models.CASCADE)
-	path = models.CharField(max_length=200)
+	accuracy = models.IntegerField(null=True)
 
 	def __str__(self):
-		return self.path
+		return self.owner.username
 
 	def work(self, train=False, image=None, username=None):
 		im = Image.open('image/3.jpg')
@@ -38,7 +38,7 @@ class MnistNN(models.Model):
 
 		learning_rate = 0.001
 		training_epochs = 15
-		batch_size = 100
+		batch_size = 30
 
 		keep_prob = tf.placeholder(tf.float32)
 
@@ -83,44 +83,50 @@ class MnistNN(models.Model):
 
 		sess = tf.Session()
 		sess.run(init_op)
-		save_path = "./minist_softmax.ckpt"
+		#save_path = "./minist_softmax.ckpt"
+		save_path = './ckpt/'+self.owner.username+'.ckpt'
 
-		saver.restore(sess, save_path)
+		#saver.restore(sess, save_path)
 
 		if(not train):
+			saver.restore(sess, save_path)
 			prediction = sess.run(tf.nn.softmax(logits, 1), feed_dict={X: data, keep_prob:1})
 			p = prediction[0]
 			print(p)
 		else:
-			batch_x, batch_y = mnist.train.next_batch(11000)
+			total_data = 110
+			batch_x, batch_y = mnist.train.next_batch(total_data)
 			image_list = Images.objects.filter(owner=username)
 			for image in image_list:
 				path = 'image/'+str(image.path)+'.jpg'
-				print(path)
 				im = Image.open(path)
 				img = array(im.resize((28,28), Image.ANTIALIAS).convert("L"))
 				data = img.reshape([1, 784])
 				data = 1-(data/255)
-				print(data)
+				batch_x = np.concatenate((batch_x, data))
+				label = [0,0,0,0,0,0,0,0,0,0]
+				label[image.label]=1
+				batch_y = np.concatenate((batch_y, [label]))
+				total_data+=1
 
-			total_batch = int(mnist.train.num_examples/batch_size)
-			'''
-			for epoch in range(30):
+
+			total_batch = int(total_data/batch_size)
+			
+			for epoch in range(10):
 				total_cost = 0
-				for i in range(total_batch):
-					batch_xs, batch_ys = mnist.train.next_batch(batch_size)
+				for i in range(total_batch):	
+					batch_xs, batch_ys = batch_x[i*batch_size:(i+1)*batch_size], batch_y[i*batch_size:(i+1)*batch_size]
 					_, cost_val = sess.run([optimizer, cost], feed_dict = {X:batch_xs, Y:batch_ys, keep_prob:0.8})
 				total_cost+=cost_val
 				print('Epoch:','%04d' %(epoch+1), 'Avg. cost =', '{:3f}'.format(total_cost/total_batch))
 			print("Training Finish")
-			is_correct = tf.equal(tf.argmax(model, 1), tf.argmax(Y,1))
+			saver.save(sess, save_path)
+			is_correct = tf.equal(tf.argmax(logits, 1), tf.argmax(Y,1))
 			accuracy = tf.reduce_mean(tf.cast(is_correct, tf.float32))
 			print('Accuracy:', sess.run(accuracy, feed_dict={X: mnist.test.images, Y:mnist.test.labels, keep_prob:1}))
-			'''
+			self.accuracy = sess.run(accuracy, feed_dict={X: mnist.test.images, Y:mnist.test.labels, keep_prob:1})*100
+			self.save()
 			
-
-
-
 class TestData(models.Model):
 	pred = models.IntegerField()
 

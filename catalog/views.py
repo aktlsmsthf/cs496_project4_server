@@ -29,13 +29,14 @@ from numpy import array, argmax
 def mypage(request):
 	num_image = Images.objects.filter(owner=request.user).count()
 	image_list = Images.objects.filter(owner=request.user)
-	print(image_list.values('img'))
+	accuracy = MnistNN.objects.filter(owner=request.user).values('accuracy')[0]['accuracy']
 
 	return render(
 		request,
 		'mypage.html',
 		context = {'num_images':num_image, 
-		'image_list':image_list},
+		'image_list':image_list,
+		'accuracy': accuracy},
 	)
 
 @login_required
@@ -49,6 +50,14 @@ def index(request):
 
 @csrf_exempt
 def post_list(request):
+	return render(request, 'post_list.html', {})
+
+@csrf_exempt
+def delete(request):
+	print("delete")
+	result = list(request.POST.keys())
+	if(request.method == 'POST'):
+		print(result)
 	return render(request, 'post_list.html', {})
 
 @csrf_exempt
@@ -70,7 +79,6 @@ def data_return(request):
 			path = 1
 		else:
 			path = path+1
-		print(index, path)
 
 		nimage = Images()
 		nimage.owner = request.user
@@ -104,8 +112,18 @@ def data_return(request):
 @csrf_exempt
 def train(request):
 	if(request.method=='POST'):
-		mnist = MnistNN.objects.filter(owner=request.user)
-		mnist[0].work(True, None, request.user)
+		exist = MnistNN.objects.filter(owner=request.user).count()
+		if(exist!=0):
+			mnist = MnistNN.objects.filter(owner=request.user)
+			mnist[0].work(True, None, request.user)
+		else:
+			mnist = MnistNN()
+			user = request.user._wrapped if hasattr(request.user, '_wrapped') else request.user
+			mnist.owner = user
+			mnist.save()
+			accuracy = mnist.work(True, None, user)
+			mnist.accuracy =accuracy
+			mnist.save()
 		return render(request, 'test.html', {})
 		'''
 		tf.set_random_seed(777)  # reproducibility
