@@ -1,8 +1,9 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-	<div id="direction"><p>RIGHT CLICK to SEND DATA</p></div>
-	<div id="name">
+	<div id="content">
+	<div id="direction" style="margin-left:500px;"><p>RIGHT CLICK to SEND DATA</p></div>
+	<div id="name" style="margin-left:500px;">
 		<canvas id="canvas" width="560" height="560" style="border:8px solid;float: left;border-radius: 5px;cursor: crosshair;"></canvas>
 		<div id = "result">
 			<p>Please write number</p>
@@ -34,5 +35,6 @@
 				})
 			}
 		</script>
+	</div>
 	</div>
 {% endblock %}

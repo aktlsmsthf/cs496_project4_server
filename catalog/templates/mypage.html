@@ -1,11 +1,13 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
+<div id = "context">
+<div style="margin-left:50px">
 <h2> My Page </h2>
-
 <p><strong>Images: </strong> {{num_images}}</p>
 <p><strong>Accuracy: </strong> {{accuracy}}%</p>
 <button id="delete" onclick="deletes()">Delete Image</button>
+</div></div>
 <ul class='gallery' style="list-style-type:none;">
 	{% if image_list %}
 		{% for image in image_list %}
